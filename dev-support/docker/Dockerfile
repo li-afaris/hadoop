@@ -73,6 +73,7 @@ RUN mkdir -p /opt/maven && \
          http://www-us.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz \
          -o /opt/maven.tar.gz && \
     tar xzf /opt/maven.tar.gz --strip-components 1 -C /opt/maven
+ENV PATH=/opt/maven/bin:$PATH
 ENV MAVEN_HOME /opt/maven
 
 
@@ -137,12 +138,18 @@ ENV MAVEN_OPTS -Xms256m -Xmx1536m
 ###
 # Install node js tools for web UI frameowkr
 ###
-RUN apt-get -y install nodejs && \
-    ln -s /usr/bin/nodejs /usr/bin/node && \
-    apt-get -y install npm && \
-    npm config set strict-ssl false && \
-    npm install -g bower && \
-    npm install -g ember-cli
+#`RUN apt-get -y install nodejs && \
+#    ln -s /usr/bin/nodejs /usr/bin/node && \
+#    apt-get -y install npm && \
+#    npm config set strict-ssl false && \
+#    npm install -g bower && \
+#    npm install -g ember-cli
+RUN curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash - \
+ && sudo apt-get install -y nodejs
+RUN npm install -g npm && hash -r && npm config set strict-ssl false 
+RUN npm install -g bower
+RUN npm install -g ember-cli
+     
 
 ###
 # Everything past this point is either not needed for testing or breaks Yetus.
