@@ -6,7 +6,10 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 
 public class OBHCTimelineServer {
 
-    public static Server createServer(int port) {
+    public static Server createOBHCServer(int port) {
+        // Start OBHCStatus Server
+        // https://www.eclipse.org/jetty/documentation/current/embedding-jetty.html#_embedding_contexts
+
         Server server = new Server(port);
         ContextHandler context = new ContextHandler();
         context.setContextPath("/admin");
@@ -17,13 +20,12 @@ public class OBHCTimelineServer {
     }
 
     public static void main(String[] args) throws Exception {
-        // Start OBHCStatus Server
-        // https://www.eclipse.org/jetty/documentation/current/embedding-jetty.html#_embedding_contexts
+
         ApplicationHistoryServer ahs = new ApplicationHistoryServer();
-        ahs.launchAppHistoryServer(args);
+        new Thread((Runnable) ahs.launchAppHistoryServer(args)).start();
 
         int port = 1234;
-        Server server = createServer(port);
+        Server server = createOBHCServer(port);
         server.start();
         server.join();
     }
